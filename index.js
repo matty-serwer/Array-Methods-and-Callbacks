@@ -183,13 +183,15 @@ console.log(getCountryTitles(fifaData, "BRA"));
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(data) {
 
-    /* code here */
-
+    const newArray = data.map(function(match){
+        return [match["Home Team Name"], match["Home Team Goals"]]; 
+    });
+    return newArray;
 };
 
-getGoals();
+console.log(getGoals(fifaData));
 
 
 /* Stretch 4: Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
