@@ -13,7 +13,7 @@ console.log('its working');
 (e) Winner of 2014 world cup final */
 
 const final2014 = fifaData.findIndex(function(match) {
-    return match["Year"] == "2014" &&  match["Stage"] == "Final";
+    return match.Year == "2014" &&  match.Stage == "Final";
 });
 
 console.log(final2014);
@@ -35,7 +35,7 @@ if(fifaData[final2014]["Home Team Goals"] > fifaData[final2014]["Away Team Goals
 
 function getFinals(data) {
     const onlyFinals = data.filter(function(match){
-        return match["Stage"] === "Final";
+        return match.Stage === "Final";
     })
     return onlyFinals;
 };
@@ -48,22 +48,30 @@ console.log(getFinals(fifaData));
 function getYears(callback, data) {
 
     const years = callback(data).map(function(item){
-        return item["Year"];
+        return item.Year;
     })
-    console.log(years);
+    return years;
 };
 
-getYears(getFinals, fifaData);
+console.log(getYears(getFinals, fifaData));
 
 /* Task 4: Implement a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
+function getWinners(callback, data) {
 
-    /* code here */
-
+    const winners = callback(data).map(function(match){
+        if(match["Home Team Goals"] > match["Away Team Goals"]) {
+            return  match["Home Team Name"];
+        } else if(match["Home Team Goals"] < match["Away Team Goals"]) {
+            return match["Away Team Name"];
+        } else {
+            return "N/A"
+        }
+    })
+    return winners;
 };
 
-getWinners();
+console.log(getWinners(getFinals, fifaData));
 
 /* Task 5: Implement a higher-order function called `getWinnersByYear` that accepts the following parameters and returns a set of strings "In {year}, {country} won the world cup!" 
 
@@ -72,21 +80,49 @@ Parameters:
  * callback function getYears
  */
 
-function getWinnersByYear(/* code here */) {
-
+function getWinnersByYear(winnersFunction, yearsFunction) {
+    const stringsArray = [];
+    const winningTeams = winnersFunction(getFinals, fifaData);
+    const years = yearsFunction(getFinals, fifaData);
+    console.log(years);
+    for (let i = 0; i < years.length; i++) {
+        stringsArray.push(`In ${years[i]}, ${winningTeams[i]} won the world cup!`);
+    }
+    return stringsArray;
 };
 
-getWinnersByYear();
+console.log(getWinnersByYear(getWinners, getYears));
 
 /* Task 6: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */
 
-function getAverageGoals(/* code here */) {
+// this returns Home and Away average goals separately.
 
-    /* code here */
-
+function getAverageGoals(data) {
+    let numGames = 0;
+    const totHomeGoals = data.reduce(function(accumulator, match) {
+        numGames++;
+        return accumulator + match["Home Team Goals"];
+    },0);
+    const totAwayGoals = data.reduce(function(accumulator, match){
+        return accumulator + match["Away Team Goals"];
+    },0);
+    return {averageHomeTeamGoals: (totHomeGoals / numGames), averageAwayTeamGoals: (totAwayGoals / numGames)};
 };
 
-getAverageGoals();
+console.log(getAverageGoals(fifaData));
+
+// this returns total goals per match average
+
+function getAverageTotalGoals(data) {
+    let numGames = 0;
+    const goalsTotal = data.reduce(function(accumulator, match){
+        numGames++;
+        return accumulator + match["Home Team Goals"] + match["Away Team Goals"]
+    },0);
+    return goalsTotal / numGames;
+}
+
+console.log(getAverageTotalGoals(fifaData));
 
 /// STRETCH 🥅 //
 
@@ -101,7 +137,7 @@ function getCountryWins(/* code here */) {
 
 };
 
-getCountryWins();
+getCountryWins(fifaData, teamInitials);
 
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
