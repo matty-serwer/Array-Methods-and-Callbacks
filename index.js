@@ -131,14 +131,55 @@ console.log(getAverageTotalGoals(fifaData));
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
+// neither of these can account for elimination matches that were decided by penalties.
 
-    /* code here */
+function getCountryWins(data, teamID) {
+
+    return data.reduce(function(accumulator, match){
+        if(match["Home Team Initials"] === teamID && match["Home Team Goals"] > match["Away Team Goals"]) {
+            // console.log(match);
+            return accumulator + 1;
+        } else if(match["Away Team Initials"] === teamID && match["Away Team Goals"] > match["Home Team Goals"]){
+            // console.log(match);
+            return accumulator + 1;
+        }else if(match["Home Team Initials"] === teamID && match["Home Team Name"] === match["Win conditions"].substr(0, match["Home Team Name"].length)) {
+            return accumulator + 1;
+        } else if(match["Away Team Initials"] === teamID && match["Away Team Name"] === match["Win conditions"].substr(0, match["Away Team Name"].length)) {
+            return accumulator + 1;
+        } else {
+            return accumulator;
+        }
+    },0)
 
 };
 
-getCountryWins(fifaData, teamInitials);
+console.log(getCountryWins(fifaData, "BRA"));
 
+function getCountryTitles(data, teamID) {
+
+    return data.reduce(function(accumulator, match){
+        if(match.Stage === "Final" && match["Home Team Initials"] === teamID && match["Home Team Goals"] > match["Away Team Goals"]) {
+            return accumulator + 1;
+        } else if(match.Stage === "Final" && match["Away Team Initials"] === teamID && match["Away Team Goals"] > match["Home Team Goals"]){
+            return accumulator + 1;
+        } else if(match.Stage === "Final" && match["Home Team Initials"] === teamID && match["Home Team Name"] === match["Win conditions"].substr(0, match["Home Team Name"].length)) {
+            return accumulator + 1;
+        } else if(match.Stage === "Final" && match["Away Team Initials"] === teamID && match["Away Team Name"] === match["Win conditions"].substr(0, match["Away Team Name"].length)) {
+            return accumulator + 1;
+        } else {
+            return accumulator;
+        }
+    },0)
+
+};
+
+// let winCons = fifaData.map(function(match){
+//     return match["Win conditions"];
+// });
+
+// console.log(winCons);
+
+console.log(getCountryTitles(fifaData, "BRA"));
 
 /* Stretch 3: Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
